@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fruit Crush Deluxe — Menu</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { background: linear-gradient(135deg, #75034b 0%, #7873f5 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; color: #fff; padding: 20px; overflow-x: hidden; }
+    .container { width: 100%; max-width: 1200px; display: flex; flex-direction: column; gap: 30px; }
+    header { display: flex; justify-content: space-between; align-items: center; padding: 20px; background: rgba(255, 255, 255, 0.1); border-radius: 20px; backdrop-filter: blur(10px); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); }
+    .logo { font-size: 2.2rem; font-weight: 800; background: linear-gradient(45deg, #ff9a9e, #fad0c4); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; display: flex; align-items: center; gap: 10px; }
+    .menu-actions { display: flex; gap: 10px; }
+    button { padding: 12px 16px; border: none; border-radius: 12px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); display: inline-flex; align-items: center; justify-content: center; gap: 10px; }
+    button:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); }
+    .btn-primary { background: linear-gradient(45deg, #ff9a9e, #fad0c4); color: #333; }
+    .btn-secondary { background: linear-gradient(45deg, #a18cd1, #fbc2eb); color: white; }
+    .btn-danger { background: linear-gradient(45deg, #ff7b00, #ffcc00); color: white; }
+
+    .content { display: grid; grid-template-columns: 380px 1fr; gap: 30px; }
+
+    .card { background: rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 20px; backdrop-filter: blur(10px); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); }
+    .title { font-size: 1.4rem; font-weight: 600; display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+
+    .user-card { display: flex; gap: 16px; align-items: center; }
+    .user-avatar { width: 70px; height: 70px; border-radius: 50%; background: linear-gradient(45deg, #ff9a9e, #fad0c4); display: flex; align-items: center; justify-content: center; font-size: 2rem; }
+    .user-fields { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+    .field-row { display: grid; grid-template-columns: 1fr 120px; gap: 8px; }
+    input[type="text"]{ padding: 12px 14px; border-radius: 12px; border: none; outline: none; background: rgba(255,255,255,0.2); color: #fff; }
+    .meta { opacity: 0.9; }
+
+    .levels-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); gap: 15px; max-height: 520px; overflow-y: auto; padding: 10px; }
+    .level-node { width: 70px; height: 70px; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold; cursor: pointer; transition: all 0.3s ease; position: relative; background: rgba(255, 255, 255, 0.15); box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); }
+    .level-node:hover { transform: scale(1.1); }
+    .level-node.current { box-shadow: 0 0 0 3px #fff, 0 0 20px 5px #ff7b00; }
+    .level-node.completed { background: linear-gradient(45deg, #4ecdc4, #00c6ff); }
+    .level-node.locked { background: rgba(0,0,0,0.3); cursor: not-allowed; opacity: 0.5; }
+
+    .footer-actions { display: flex; gap: 12px; margin-top: 16px; flex-wrap: wrap; }
+
+    @media (max-width: 1000px){ .content { grid-template-columns: 1fr; } }
+    @media (max-width: 600px){ .levels-grid { grid-template-columns: repeat(auto-fill, minmax(54px, 1fr)); } .level-node{ width: 54px; height: 54px; font-size: 1.1rem; } }
+  </style>
+</head>
+<body>
+  <!-- Background music for menu -->
+  <audio id="menuBgm" loop preload="auto">
+    <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_4f2d2b5f9a.mp3?filename=lofi-study-112191.mp3" type="audio/mpeg">
+    <source src="assets/music/menu-bgm.mp3" type="audio/mpeg">
+    <source src="assets/music/menu-bgm.ogg" type="audio/ogg">
+  </audio>
+
+  <div class="container">
+    <header>
+      <div class="logo"><i class="fas fa-apple-alt"></i><span>Neha Fruit Crush</span></div>
+      <div class="menu-actions">
+        <button class="btn-secondary" id="toggleMusic"><i class="fas fa-music"></i> Music: On</button>
+      </div>
+    </header>
+
+    <div class="content">
+      <div class="card">
+        <div class="title"><i class="fas fa-user"></i> Player</div>
+        <div class="user-card">
+          <div class="user-avatar" id="userAvatar"><i class="fas fa-user"></i></div>
+          <input type="file" id="photoUpload" accept="image/*" style="display: none;" />
+          <div class="user-fields">
+            <div class="field-row">
+              <input type="text" id="playerName" placeholder="Enter your name" />
+              <button class="btn-primary" id="saveName"><i class="fas fa-save"></i> Save</button>
+            </div>
+            <div class="meta">Highest Unlocked Level: <b id="unlockedLabel">1</b></div>
+            <div class="footer-actions">
+              <button class="btn-primary" id="continueBtn"><i class="fas fa-play"></i> Continue</button>
+              <button class="btn-danger" id="resetProgress"><i class="fas fa-undo"></i> Reset Progress</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="title"><i class="fas fa-map"></i> Level Map</div>
+        <div class="levels-grid" id="levelsGrid"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const MAX_LEVEL = 50;
+      const nameInput = document.getElementById('playerName');
+      const saveNameBtn = document.getElementById('saveName');
+      const unlockedLabel = document.getElementById('unlockedLabel');
+      const continueBtn = document.getElementById('continueBtn');
+      const resetBtn = document.getElementById('resetProgress');
+      const levelsGrid = document.getElementById('levelsGrid');
+      const toggleMusic = document.getElementById('toggleMusic');
+      const menuBgm = document.getElementById('menuBgm');
+
+      // Load profile and progress
+      const loadState = () => {
+        let name = localStorage.getItem('playerName') || 'Player 1';
+        let unlocked = parseInt(localStorage.getItem('unlockedLevel') || '1', 10);
+        if (isNaN(unlocked) || unlocked < 1) unlocked = 1;
+        nameInput.value = name;
+        unlockedLabel.textContent = unlocked;
+        return { name, unlocked };
+      };
+
+      const state = loadState();
+
+      // Audio initialization and handling
+      let musicOn = true;
+      menuBgm.volume = 0.4;
+      
+      // Check if audio can be played and handle errors
+      const initializeAudio = () => {
+        menuBgm.addEventListener('error', (e) => {
+          console.error('Audio loading error:', e);
+          toggleMusic.disabled = true;
+          toggleMusic.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Audio Error';
+          toggleMusic.style.opacity = '0.6';
+        });
+        
+        menuBgm.addEventListener('canplaythrough', () => {
+          console.log('Audio loaded successfully');
+        });
+      };
+
+      // Enable audio on first interaction with better error handling
+      const enableAudioOnce = () => {
+        if (musicOn) {
+          menuBgm.play().catch(error => {
+            console.warn('Autoplay blocked:', error);
+            // Show user that interaction is needed
+            toggleMusic.innerHTML = '<i class="fas fa-play"></i> Click to Play';
+          });
+        }
+      };
+      
+      // Multiple interaction listeners for better compatibility
+      document.addEventListener('pointerdown', enableAudioOnce, { once: true });
+      document.addEventListener('click', enableAudioOnce, { once: true });
+      document.addEventListener('keydown', enableAudioOnce, { once: true });
+
+      toggleMusic.addEventListener('click', () => {
+        if (toggleMusic.disabled) return;
+        
+        musicOn = !musicOn;
+        if (musicOn) {
+          menuBgm.play().catch(error => {
+            console.warn('Play failed:', error);
+            musicOn = false;
+          });
+          toggleMusic.innerHTML = '<i class="fas fa-music"></i> Music: On';
+        } else {
+          menuBgm.pause();
+          toggleMusic.innerHTML = '<i class="fas fa-volume-mute"></i> Music: Off';
+        }
+      });
+
+      // Initialize audio on load
+      initializeAudio();
+
+      // Save name
+      saveNameBtn.addEventListener('click', () => {
+        const name = (nameInput.value || 'Player 1').trim();
+        localStorage.setItem('playerName', name);
+        alert('Saved!');
+      });
+
+      // Continue to next playable level
+      continueBtn.addEventListener('click', () => {
+        const unlocked = parseInt(localStorage.getItem('unlockedLevel') || '1', 10);
+        const next = Math.min(MAX_LEVEL, unlocked);
+        location.href = `game.html?level=${next}`;
+      });
+
+      // Reset progress
+      resetBtn.addEventListener('click', () => {
+        if (confirm('Reset your progress?')) {
+          localStorage.setItem('unlockedLevel', '1');
+          unlockedLabel.textContent = '1';
+          renderLevels(1);
+        }
+      });
+
+      // Build map
+      function renderLevels(unlocked){
+        levelsGrid.innerHTML = '';
+        for (let i=1; i<=MAX_LEVEL; i++) {
+          const node = document.createElement('div');
+          node.className = 'level-node';
+          if (i < unlocked) node.classList.add('completed');
+          if (i === unlocked) node.classList.add('current');
+          if (i > unlocked+1) node.classList.add('locked');
+          node.innerHTML = (i > unlocked+1) ? '<i class="fas fa-lock"></i>' : `<span>${i}</span>`;
+          node.title = `Level ${i}`;
+          node.addEventListener('click', () => {
+            if (i <= unlocked + 1) {
+              location.href = `game.html?level=${i}`;
+            }
+          });
+          levelsGrid.appendChild(node);
+        }
+      }
+
+      renderLevels(state.unlocked);
+    });
+  </script>
+</body>
+</html>
